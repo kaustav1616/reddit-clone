@@ -1,5 +1,6 @@
 package com.kaustav.redditbackend.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,14 +19,14 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Table(name = "token")
 public class VerificationToken
 {
-
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     private String token;
 
-    @OneToOne(fetch = LAZY)
+    @OneToOne(fetch = LAZY, mappedBy = "token")
+    @JsonBackReference
     private User user;
 
     private Instant expiryDate;

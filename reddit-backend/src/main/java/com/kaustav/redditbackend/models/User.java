@@ -60,4 +60,9 @@ public class User
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     @JsonManagedReference
     private List<Comment> comments;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "token_id", referencedColumnName = "id")
+    @JsonManagedReference
+    private VerificationToken token;
 }
