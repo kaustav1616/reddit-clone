@@ -16,18 +16,21 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "token")
+@Table(name = "verification_token")
 public class VerificationToken
 {
     @Id
     @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "id")
     private Long id;
 
+    @Column(name = "token")
     private String token;
 
     @OneToOne(fetch = LAZY, mappedBy = "token")
     @JsonBackReference
     private User user;
 
+    @Column(name = "expiry_date")
     private Instant expiryDate;
 }

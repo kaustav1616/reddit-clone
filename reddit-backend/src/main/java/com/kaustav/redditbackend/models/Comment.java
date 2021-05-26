@@ -18,24 +18,28 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @NoArgsConstructor
 @Builder
 @Entity
+@Table(name = "comment")
 public class Comment
 {
     @Id
     @GeneratedValue(strategy = SEQUENCE)
+    @Column(name = "id")
     private Long id;
 
     @NotEmpty
+    @Column(name = "text")
     private String text;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", referencedColumnName = "postId")
+    @JoinColumn(name = "post_id")
     @JsonBackReference
     private Post post;
 
+    @Column(name = "created_date")
     private Instant createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
 }

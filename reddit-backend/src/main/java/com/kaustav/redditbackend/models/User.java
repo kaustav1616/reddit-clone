@@ -18,24 +18,31 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "user")
 public class User
 {
     @Id
     @GeneratedValue(strategy = SEQUENCE)
+    @Column(name = "user_id")
     private Long userId;
 
     @NotBlank(message = "Username is required")
+    @Column(name = "user_name")
     private String username;
 
     @NotBlank(message = "Password is required")
+    @Column(name = "password")
     private String password;
 
     @Email
     @NotEmpty(message = "Email is required")
+    @Column(name = "email")
     private String email;
 
+    @Column(name = "created")
     private Instant created;
 
+    @Column(name = "enabled")
     private boolean enabled;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -61,7 +68,7 @@ public class User
     @JsonManagedReference
     private List<Comment> comments;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "token_id", referencedColumnName = "id")
     @JsonManagedReference
     private VerificationToken token;

@@ -16,23 +16,26 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "vote")
 @Builder
 public class Vote
 {
     @Id
     @GeneratedValue(strategy = SEQUENCE)
+    @Column(name = "vote_id")
     private Long voteId;
 
+    @Column(name = "vote_type")
     private VoteType voteType;
 
     @NotNull
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "post_id", referencedColumnName = "postId")
+    @JoinColumn(name = "post_id")
     @JsonBackReference
     private Post post;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
 }

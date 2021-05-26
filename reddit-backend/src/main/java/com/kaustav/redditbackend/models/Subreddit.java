@@ -19,27 +19,32 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "subreddit")
 @Builder
 public class Subreddit
 {
     @Id
     @GeneratedValue(strategy = SEQUENCE)
+    @Column(name = "id")
     private Long id;
 
     @NotBlank(message = "Community name is required")
+    @Column(name = "name")
     private String name;
 
     @NotBlank(message = "Description is required")
+    @Column(name = "description")
     private String description;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "subreddit")
     @JsonManagedReference
     private List<Post> posts;
 
+    @Column(name = "created_date")
     private Instant createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", referencedColumnName = "userId")
+    @JoinColumn(name = "creator_id")
     @JsonBackReference
     private User creator;
 

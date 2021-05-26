@@ -18,6 +18,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 
 @Data
 @Entity
+@Table(name = "post")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,29 +26,35 @@ public class Post
 {
     @Id
     @GeneratedValue(strategy = SEQUENCE)
+    @Column(name = "post_id")
     private Long postId;
 
     @NotBlank(message = "Post Name cannot be empty or Null")
+    @Column(name = "post_name")
     private String postName;
 
     @Nullable
+    @Column(name = "url")
     private String url;
 
     @Nullable
     @Lob
+    @Column(name = "description")
     private String description;
 
+    @Column(name = "vote_count")
     private Integer voteCount;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
 
+    @Column(name = "created_date")
     private Instant createdDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subreddit_id", referencedColumnName = "id")
+    @JoinColumn(name = "subreddit_id")
     @JsonBackReference
     private Subreddit subreddit;
 
