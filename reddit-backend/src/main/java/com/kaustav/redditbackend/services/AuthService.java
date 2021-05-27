@@ -32,21 +32,22 @@ public class AuthService
         user.setEmail(registerRequest.getEmail());
         user.setPassword(encodePassword(registerRequest.getPassword()));
         user.setCreated(now());
-        user.setEnabled(false);
+        user.setEnabled(true);
+        VerificationToken token = generateVerificationToken(user);
+        user.setToken(token);
 
         userRepository.save(user);
-
-        String token = generateVerificationToken(user);
     }
 
-    private String generateVerificationToken(User user)
+    @Transactional
+    private VerificationToken generateVerificationToken(User user)
     {
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken();
         verificationToken.setToken(token);
         verificationToken.setUser(user);
         verificationTokenRepository.save(verificationToken);
-        return token;
+        return verificationToken;
     }
 
     private String encodePassword(String password)

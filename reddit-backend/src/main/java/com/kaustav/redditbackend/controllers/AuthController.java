@@ -16,7 +16,6 @@ import static org.springframework.http.HttpStatus.OK;
 @AllArgsConstructor
 public class AuthController
 {
-
     private final AuthService authService;
 
     @PostMapping("/signup")
