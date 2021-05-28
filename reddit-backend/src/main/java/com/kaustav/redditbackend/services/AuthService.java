@@ -1,5 +1,7 @@
 package com.kaustav.redditbackend.services;
 
+import com.kaustav.redditbackend.dto.AuthenticationResponse;
+import com.kaustav.redditbackend.dto.LoginRequest;
 import com.kaustav.redditbackend.dto.RegisterRequest;
 import com.kaustav.redditbackend.models.User;
 import com.kaustav.redditbackend.models.VerificationToken;
@@ -7,6 +9,10 @@ import com.kaustav.redditbackend.repositories.UserRepository;
 import com.kaustav.redditbackend.repositories.VerificationTokenRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +29,8 @@ public class AuthService
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JWTProvider jwtProvider;
 
     @Transactional
     public void signup(RegisterRequest registerRequest)
@@ -39,8 +47,18 @@ public class AuthService
         userRepository.save(user);
     }
 
+    public AuthenticationResponse login(LoginRequest loginRequest)
+    {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+                loginRequest.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String authenticationToken = jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
+    }
+
     @Transactional
-    private VerificationToken generateVerificationToken(User user)
+    public VerificationToken generateVerificationToken(User user)
     {
         String token = UUID.randomUUID().toString();
         VerificationToken verificationToken = new VerificationToken();
@@ -52,6 +70,7 @@ public class AuthService
 
     private String encodePassword(String password)
     {
-        return passwordEncoder.encode(password);
+        String encodedPassword = passwordEncoder.encode(password);
+        return encodedPassword;
     }
 }

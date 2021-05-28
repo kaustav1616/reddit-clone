@@ -1,5 +1,7 @@
 package com.kaustav.redditbackend.controllers;
 
+import com.kaustav.redditbackend.dto.AuthenticationResponse;
+import com.kaustav.redditbackend.dto.LoginRequest;
 import com.kaustav.redditbackend.dto.RegisterRequest;
 import com.kaustav.redditbackend.services.AuthService;
 import lombok.AllArgsConstructor;
@@ -23,5 +25,11 @@ public class AuthController
     {
         authService.signup(registerRequest);
         return new ResponseEntity(OK);
+    }
+
+    @PostMapping("/login")
+    public AuthenticationResponse login(@RequestBody LoginRequest loginRequest)
+    {
+        return authService.login(loginRequest);
     }
 }
