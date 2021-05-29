@@ -1,5 +1,6 @@
 package com.kaustav.redditbackend.configs;
 
+import com.kaustav.redditbackend.filters.JWTAuthenticationFilter;
 import com.kaustav.redditbackend.services.UserDetailsServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Component;
 
 @EnableWebSecurity
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Component;
 public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
     private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final JWTAuthenticationFilter jwtAuthenticationFilter;
 
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception
@@ -31,6 +34,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                 .permitAll()
                 .anyRequest()
                 .authenticated();
+
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter,
+                UsernamePasswordAuthenticationFilter.class);
     }
 
     @Autowired

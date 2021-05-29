@@ -52,8 +52,8 @@ public class AuthService
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                 loginRequest.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authenticate);
-        String authenticationToken = jwtProvider.generateToken(authenticate);
+        SecurityContextHolder.getContext().setAuthentication(authenticate); // setting Authentication object in the Spring Security context
+        String authenticationToken = jwtProvider.generateToken(authenticate); // generate jwt from Authentication object
         return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
     }
 
