@@ -4,6 +4,7 @@ import com.kaustav.redditbackend.dto.PostRequest;
 import com.kaustav.redditbackend.dto.PostResponse;
 import com.kaustav.redditbackend.exceptions.PostNotFoundException;
 import com.kaustav.redditbackend.exceptions.SubredditNotFoundException;
+import com.kaustav.redditbackend.mapper.PostMapper;
 import com.kaustav.redditbackend.mapper.PostMapperImpl;
 import com.kaustav.redditbackend.models.Post;
 import com.kaustav.redditbackend.models.Subreddit;

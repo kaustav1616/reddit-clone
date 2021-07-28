@@ -25,6 +25,7 @@ import static java.time.Instant.now;
 @Service
 @AllArgsConstructor
 @Slf4j
+@Transactional
 public class AuthService
 {
     private final UserRepository userRepository;
