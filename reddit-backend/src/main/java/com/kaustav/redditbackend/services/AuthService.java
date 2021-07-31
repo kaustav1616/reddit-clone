@@ -2,6 +2,7 @@ package com.kaustav.redditbackend.services;
 
 import com.kaustav.redditbackend.dto.AuthenticationResponse;
 import com.kaustav.redditbackend.dto.LoginRequest;
+import com.kaustav.redditbackend.dto.RefreshTokenRequest;
 import com.kaustav.redditbackend.dto.RegisterRequest;
 import com.kaustav.redditbackend.models.User;
 import com.kaustav.redditbackend.models.VerificationToken;
@@ -18,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import static java.time.Instant.now;
@@ -33,6 +35,7 @@ public class AuthService
     private final VerificationTokenRepository verificationTokenRepository;
     private final AuthenticationManager authenticationManager;
     private final JWTProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public void signup(RegisterRequest registerRequest)
@@ -49,14 +52,32 @@ public class AuthService
         userRepository.save(user);
     }
 
+
     public AuthenticationResponse login(LoginRequest loginRequest)
     {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                 loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String token = jwtProvider.generateToken(authenticate);
+        return AuthenticationResponse.builder()
+                .authenticationToken(token)
+                .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .username(loginRequest.getUsername())
+                .build();
+    }
 
-        SecurityContextHolder.getContext().setAuthentication(authenticate); // setting Authentication object in the Spring Security context
-        String authenticationToken = jwtProvider.generateToken(authenticate); // generate jwt from Authentication object
-        return new AuthenticationResponse(authenticationToken, loginRequest.getUsername());
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest)
+    {
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+        String token = jwtProvider.generateTokenWithUserName(refreshTokenRequest.getUsername());
+
+        return AuthenticationResponse.builder()
+                .authenticationToken(token)
+                .refreshToken(refreshTokenRequest.getRefreshToken())
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .username(refreshTokenRequest.getUsername())
+                .build();
     }
 
     @Transactional
